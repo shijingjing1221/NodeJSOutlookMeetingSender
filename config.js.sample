@@ -1,0 +1,18 @@
+/**
+/**
+ *  在这里添加所有的配置
+ */
+
+var config = {
+	port: 3200, 
+	reminder:{
+		gmail_user: "cgordon@163.com",
+		gmail_pass: "mstr1989",
+	  	from_name: "Gordon, Corey",
+	  	from_address: "cgordon@microstrategy.com",
+	  	smtp_host: "smtp.163.com",
+	  	smtp_port: 465
+	}
+}
+
+module.exports = config;

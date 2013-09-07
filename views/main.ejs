@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Event Manager</title>
+   
+   <link rel="stylesheet" href="css/bootstrap.min.css">
+   <link rel="stylesheet" type="text/css" media="screen"
+     href="css/bootstrap-datetimepicker.min.css">
+   <link rel="stylesheet" type="text/css" media="screen"
+     href="css/event.css">   
+   <link href="jam_modules/node36/sidebar-sample.css" rel="stylesheet" type="text/css">
+   <link rel="stylesheet" type="text/css" media="screen"
+     href="css/modern.css"> 
+   <script type="text/javascript" src="jam_modules/require.js"></script>
+   <script type="application/json" id="json-session">{%-JSON.stringify(locals.session)%}</script>
+
+    
+</head>
+<body>
+
+  <div class="container">    
+    <div id="login-button"></div>
+    <div id="bug" class="span2 pull-right"></div> 
+    <br />
+    <hr />
+    <h1>Event Manager</h1>
+    <hr />
+    <div class="page">
+    </div>
+    <div id="footer">
+    <div>
+  </div>
+  <script type="text/javascript">
+    require(['js/app'], function(app){
+      app.init();
+    });
+  </script>
+  <script type="text/template" id="login-button-template">
+    <div class="pull-right">
+      
+        {% if(locals.session.user){ %}
+         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <i class="icon-user"></i>
+          {%= locals.session.user.name %}
+          </a> 
+        {% }else{ %}
+        
+       <a type="button" href="http://www.36node.com/oauth/authorize?client_id=1&redirect_uri=<%= redirect_url %>" class="btn btn-info btn-small" id="btnLogin">Please Login</a>
+    {% } %}
+    </div>
+  </script>
+  <script type="text/template" id="unlogin-template">
+    <div class="metrouicss">
+      <p class="bg-color-blueDark padding20 fg-color-white">Please click the button to login!
+        <a class="pull-left" href="http://www.36node.com/oauth/authorize?client_id=1&amp;redirect_uri=<%= redirect_url %>" data-toggle="tooltip" data-container="body" data-placement="right" title="" data-original-title="login">
+          <img class="img" src="http://p1.36node.com/icons/icon-login.png" alt="" width="28" height="28">
+        </a>
+      </p>
+    </div>
+  </script>
+
+  <script type="text/template" id="bug-reporter-template">
+    <a href="#bugModal" role="button" class="btn show-modal" data-toggle="modal">I found a bug</a>
+  <div id="bugModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Report a Bug</h3>
+  </div>
+  <div class="modal-body">
+    <p><label>Title</label><input type="text" class="span6 title"></p>
+    <p><label>Description</label><textarea row="5" class="span6 description"></textarea></p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">close</button>
+    <button class="btn btn-primary" id="bug-submit">submit</button>
+  </div>
+</div>
+  </script>
+
+  <script type="text/template" id="event-list-template">
+    <a href="#" class="btn btn-primary"><i href="#list" class="icon-home icon-white"></i></a>
+    <a href="#list?start=<%=startTime%>" class="btn btn-primary"><i href="#list" class="icon-arrow-up icon-white"></i></a>
+    <a href="#new" class="btn btn-primary pull-right">New</a>
+    <hr />
+    <div id="event-list" class="metrouicss"></div>   
+    <div id="join-error" class="alert alert-block popover">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4>Failed!</h4>
+      <p>Sorry, this event is already full, please try others</p>
+    </div>
+  </script>
+
+  <script type="text/template" id="date-separator-template">
+    <div class="span12 date-separator">
+      <legend><%= separateDateString %></legend>
+    </div>
+  </script>
+
+  <script type="text/template" id="event-item-template">
+    <a href="#details/<%= _id %>">
+        <div class="image-container 
+              <%= tags.toString() == 'Class'?'bg-color-greenDark':'' %>
+              <%= tags.toString() == 'Club'?'bg-color-blueDark':'' %>
+              <%= tags.toString() == 'Outing'?'bg-color-orangeDark':'' %>
+              <%= isJoin?'selected':'' %> ">
+          <p>
+            <span class="badge 
+              <%= tags.toString() == 'Class'?'badge-success':'' %>
+              <%= tags.toString() == 'Club'?'badge-info':'' %>
+              <%= tags.toString() == 'Outing'?'badge-important':'' %>
+              ">
+               <%= tags.toString() == 'Class'?'English Class':'' %>
+              <%= tags.toString() == 'Club'?'Club':'' %>
+              <%= tags.toString() == 'Outing'?'Outing':'' %>
+            </span>
+          </p>
+            
+            <h2 class=""><strong><%= title?title:"Undefined Title" %></strong></h2>
+              <p>             
+              <button class="image-button bg-color-pink fg-color-white">  
+              <i class="icon-alarm bg-color-red"></i>           
+              <strong><%= dateFormat(start, "h:MM TT") %>~<%= dateFormat(end, "h:MM TT") %></strong>
+              </button>
+              </p>
+              <p><strong><%= location %></strong></p>
+              
+              <!--<div class="overlay hide"> -->
+              <div class="overlay">
+              <% if(isValid){ %>
+                <button class="button mini quickjoin -color-magenta" eid="<%= _id %>">Quick Join</button>
+              <% } %>
+                <button class="button mini -color-magenta pull-right" href="#details/<%= _id %>">View details »</button>
+             </div>
+          </div>
+       </a>
+  </script>
+
+<script type="text/template" id="create-event-template">
+    <form class="create-event-form">
+      <legend>New event</legend>
+        <label>Title</label>
+        <input name="title" type="text" value="">(required)
+        <label>Start time</label>
+        <div id="start" class="input-append date">
+          <input type="text"></input>
+          <span class="add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+          </span>
+          (required)
+        </div>
+        <label>End time</label>
+        <div id="end" class="input-append date">
+          <input type="text"></input>
+          <span class="add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+          </span>
+          (required)
+        </div>
+        <label>Location</label>
+        <input name="location" type="text" value="">
+        <label>Tag</label>
+        <select name="tags" id="" style="">
+            <option value="Class">Class</option>
+            <option value="Club">Club</option>
+            <option value="Outing">Outing</option>
+        </select>
+        <label>Max number</label>
+        <input name="max" type="text" value="">
+        <label>Min number</label>
+        <input name="min" type="text" value="">
+        <label>Rimind time (minutes)</label>
+        <input name="remindTime" type="text" value="5">
+        <hr />
+       <button class="btn create-event-button">Create</button>
+       <hr />
+       <a href="#">Return to Home</a>
+    </form>    
+  </script>
+
+  <script type="text/template" id="edit-event-template">
+    <form class="edit-event-form">
+      <legend>Edit event</legend>
+        <label>Title</label>
+        <input name="title" type="text" value="<%= title %>">(required)
+        <label>Start time</label>
+        <div id="start" class="input-append date">
+          <input type="text"></input>
+          <span class="add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+          </span>
+          (required)
+        </div>
+        <label>End time</label>
+        <div id="end" class="input-append date">
+          <input type="text"></input>
+          <span class="add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+          </span>
+          (required)
+        </div>
+        <label>Location</label>
+        <input name="location" type="text" value="<%= location %>">
+        <label>Tag</label>
+        <select name="tags" id="" style="">
+            <option value="Class" <%= tags.toString() == "Class" ? 'selected="selected"' :"" %>>Class</option>
+            <option value="Club" <%= tags.toString() == "Club" ? 'selected="selected"' :"" %>>Club</option>
+            <option value="Outing" <%= tags.toString() == "Outing" ? 'selected="selected"' :"" %>>Outing</option>
+        </select>
+        <label>Max</label>
+        <input name="max" type="text" value="<%=  max %>">
+        <label>Min</label>
+        <input name="min" type="text" value="<%=  min %>">
+        <label>Rimind time (minutes)</label>
+        <input name="remindTime" type="text" value="<%- typeof(remindTime)==='undefined'?"5":remindTime %>">
+        <hr />
+        <button type="submit" class="btn">Update</button>
+        <input type="hidden" name="_id" value="<%= _id %>" />
+        <button type="button" data-event-id="<%= _id %>" class="btn btn-danger delete">Delete</button>
+        <hr />
+        <a href="#details/<%= _id %>">Return to Detail Page</a>
+    </form>
+  </script>
+
+<script type="text/template" id="details-template">
+<div class="metrouicss">
+<legend> 
+  <% if(isSponsor){ %>
+     <a class="button bg-color-orange pull-right" href="#edit/<%= _id %>">Edit »</a>
+  <% } %>
+  <h1><%= title %></h1>
+</legend>
+<br />
+ <ul class="listview fluid">
+        <li class="bg-color-teal fg-color-white">
+            <div class="data">
+                <h4>Sponsor</h4>
+                <p><%= sponsor.name %></p>
+                <p><%= sponsor.email %></p>
+            </div>
+        </li>
+         <li class="bg-color-pink fg-color-white">
+            <div class="data">
+                <h4>Time</h4>
+                <p><%= dateFormat(start, "dddd, mmmm dS, yyyy") %></p>
+                <p><%= dateFormat(start, "h:MM TT") %> ~ <%= dateFormat(end, "h:MM TT") %></p>
+            </div>
+        </li>
+        <li class="bg-color-blue fg-color-white">
+            <div class="data">
+                <h4>Location</h4>
+                <p><%= location?location:"The location isn't specified" %></p>
+                <p><br /></p>
+            </div>
+        </li>
+        <li class="bg-color-red fg-color-white">
+            <div class="data">
+                <h4>Participant Number Limit</h4>
+                <p>Min: <%= min?min:"No limit" %></p>
+                <p>Max: <%= max?max:"No limit" %></p>
+            </div>
+        </li>
+        <li class="bg-color-orangeDark fg-color-white">
+            <div class="data">
+                <h4>Remind Time</h4>
+                <p>The outlook will remind you ahead of <%- typeof(remindTime)==='undefined'?"5":remindTime %> munites
+                </p>
+            </div>
+        </li>       
+    </ul>
+    <br />
+<table class="table striped">
+      <thead>
+        <tr>
+          <th>Participant Name</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+       <% _.each(participants, function(p) { %>
+          <tr>
+            <td><%= p.name %></td>
+            <td><%= p.email %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% if(new Date(start) > new Date()){ %>
+       <button class="button default join">Join</button>
+       <button class="button bg-color-red leave">leave</button>
+       <hr />
+    <% }else{ %> 
+       <br />
+    <% } %> 
+       <a href="#">Return to Home</a>
+       <input type="hidden" name="id" value="<%= _id %>" /> 
+   </div>     
+  </script>
+
+</body>
+</html> 
