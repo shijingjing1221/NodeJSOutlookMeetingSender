@@ -47,6 +47,22 @@ Restful接口列表，遵循极简设计原则
   			remindTime: '5',
   			location: 'Meeting Room' 
   		}
+  		
+  		Sample of request:
+  		POST with Header "Content-Type:application/json"
+  		http://localhost:3200/api/meeting
+  		{
+  			"subject": "Test Bug",
+  			"description": "create event in http://www.yueke8.cn/",
+  			"from_name": "Jingjing",
+  			"from_address": "cgordon@163.com",
+  			"to_name": "Sjj",
+  			"to_address": "shijingjing1221@gmail.com",
+			 "start_time": "2014-08-30T13:12:26.402Z",
+  			"end_time": "2014-08-30T13:12:26.402Z",
+  			"remindTime": "5",
+  			"location": "Meeting Room"
+		}
 
 
 2. 删除meeting
@@ -67,3 +83,19 @@ Restful接口列表，遵循极简设计原则
   			remindTime: '5',
   			location: 'Meeting Room' 
   		}
+  		
+  		Sample of request:
+  		DELETE with Header "Content-Type:application/json"
+  		http://localhost:3200/api/meeting
+  		{
+  			"subject": "Test Bug",
+  			"description": "create event in http://www.yueke8.cn/",
+  			"from_name": "Jingjing",
+  			"from_address": "cgordon@163.com",
+  			"to_name": "Sjj",
+  			"to_address": "shijingjing1221@gmail.com",
+			 "start_time": "2014-08-30T13:12:26.402Z",
+  			"end_time": "2014-08-30T13:12:26.402Z",
+  			"remindTime": "5",
+  			"location": "Meeting Room"
+		}
